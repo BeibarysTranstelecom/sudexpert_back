@@ -46,6 +46,11 @@ class ProfileView(mixins.ListModelMixin, GenericAPIView):
         Returns a list of all location records
         """
         return self.list(request, *args, **kwargs)
+    def post(self,request, *args, **kwargs):
+        print(request)
+        print(request.data)
+        print(request.query_params)
+        return Response('Успешно.', status.HTTP_202_ACCEPTED)
 class TendersView(mixins.ListModelMixin, GenericAPIView):
     queryset = models.Tenders.objects.all()
     serializer_class = serializers.TendersSerializer
@@ -57,6 +62,11 @@ class TendersView(mixins.ListModelMixin, GenericAPIView):
         Returns a list of all location records
         """
         return self.list(request, *args, **kwargs)
+    def post(self,request, *args, **kwargs):
+        print(request)
+        print(request.data)
+        print(request.query_params)
+        return Response('Успешно.', status.HTTP_202_ACCEPTED)
 class OrdersView(mixins.ListModelMixin, GenericAPIView):
     queryset = models.Orders.objects.all()
     serializer_class = serializers.OrdersSerializer
@@ -68,3 +78,8 @@ class OrdersView(mixins.ListModelMixin, GenericAPIView):
         Returns a list of all location records
         """
         return self.list(request, *args, **kwargs)
+    def post(self,request, *args, **kwargs):
+        print(request)
+        print(request.data)
+        print(request.query_params)
+        return Response('Успешно.', status.HTTP_202_ACCEPTED)
