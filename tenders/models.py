@@ -76,12 +76,14 @@ class Category(models.Model):
 class Tenders(models.Model):
     name = models.CharField(_("Название тендера"), max_length=255)
     category=models.ForeignKey(Category,on_delete=models.PROTECT,verbose_name='Категория')
-    date_start=models.DateField(blank=True,null=True)
-    date_end=models.DateField(blank=True,null=True)
-    date_created=models.DateField(auto_now_add=True)
+    date_start=models.DateTimeField(blank=True,null=True)
+    date_end=models.DateTimeField(blank=True,null=True)
+    date_created=models.DateTimeField(auto_now_add=True)
     status=models.CharField(
         choices=TenderStatus.choices, default=TenderStatus.CREATED,verbose_name='Статус',max_length=255
     )
+    description=models.TextField(default='',verbose_name='Описание')
+    reject_text=models.TextField(default='',verbose_name='Описание')
     moderator_complate=models.BooleanField(default=False,verbose_name='Проверка модератора')
     enable=models.BooleanField(default=False,verbose_name='Активный')
     customer=models.ForeignKey(User,on_delete=models.SET_NULL,verbose_name='Заказчик',related_name='tender_customer',null=True,blank=True)
