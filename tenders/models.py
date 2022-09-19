@@ -88,6 +88,7 @@ class Tenders(models.Model):
     enable=models.BooleanField(default=False,verbose_name='Активный')
     customer=models.ForeignKey(User,on_delete=models.SET_NULL,verbose_name='Заказчик',related_name='tender_customer',null=True,blank=True)
     executor=models.ForeignKey(User,on_delete=models.SET_NULL,verbose_name='Исполнитель',related_name='tender_executor',null=True,blank=True)
+    winner=models.ForeignKey(User,on_delete=models.SET_NULL,verbose_name='Победитель',related_name='tender_winner',null=True,blank=True)
     order=models.ForeignKey('Orders',on_delete=models.SET_NULL,verbose_name='Победитель',related_name='tender_order',null=True,blank=True)
     def __str__(self):
         return self.name

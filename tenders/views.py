@@ -169,8 +169,12 @@ class OrdersCheckView(mixins.ListModelMixin, GenericAPIView):
     pagination_class = None
     def get(self, request, *args, **kwargs):
         user=request.user
-        try:
-            order=models.Orders.objects.get(executor=user)
-            return Response({'order_id':order.id},status=status.HTTP_200_OK)
-        except:
-            return Response('Не найдено', status=status.HTTP_404_NOT_FOUND)
+        tender_id =request.query_params['tender_id']
+        tender=models.Tenders.objects.get(id=int(tender_id))
+        if tender.winner:
+            if tender.winner==user:
+                return Response({'status': 'winner'}, status=status.HTTP_200_OK)
+            else:
+                return Response({'status': 'no_loser'}, status=status.HTTP_404_NOT_FOUND)
+        else:
+            return Response({'status': 'in_progress'}, status=status.HTTP_404_NOT_FOUND)
