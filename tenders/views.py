@@ -181,3 +181,31 @@ class OrdersCheckView(mixins.ListModelMixin, GenericAPIView):
                 return Response({'status': 'in_progress'}, status=status.HTTP_404_NOT_FOUND)
             else:
                 return Response({'status': 'created'}, status=status.HTTP_404_NOT_FOUND)
+
+
+class TenderCheckView(mixins.ListModelMixin, GenericAPIView):
+    permission_classes = [AllowAny]
+    def get(self, request, *args, **kwargs):
+        from django.utils import timezone
+        now = timezone.now()
+        tenders=models.Tenders.objects.filter(enable=True).exclude(status=models.TenderStatus.FINISHED).exclude(status=models.TenderStatus.REJECTED).exclude(status=models.TenderStatus.NO_ACTIVE)
+
+        print('now=',now)
+        for i in tenders:
+            if i.date_end:
+                if now>i.date_end:
+                    orders=models.Orders.objects.filter(tender=i).order_by('price')
+                    if len(orders)>0:
+                        i.order=orders[0]
+                        i.executor=orders[0].executor
+                        i.winner=orders[0].executor
+                        i.status=models.TenderStatus.FINISHED
+                        i.save()
+                    else:
+                        i.status=models.TenderStatus.NO_ACTIVE
+                        i.save()
+
+
+            # if i.date_end<datetime.datetime.now():
+            #     print(i.id)
+        return Response({'status': 'created'}, status=status.HTTP_404_NOT_FOUND)

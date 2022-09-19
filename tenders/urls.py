@@ -30,4 +30,5 @@ path("schema/", SpectacularAPIView.as_view(), name="schema"),
     path("tender/<int:pk>/", views.TenderView.as_view()),
     path("orders/", views.OrdersView.as_view()),
     path("check_orders/", views.OrdersCheckView.as_view()),
+    path("check_tenders/", views.TenderCheckView.as_view()),
 ]

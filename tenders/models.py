@@ -9,6 +9,7 @@ from tenders.managers import UserManager
 class TenderStatus(models.TextChoices):
     CREATED = "CREATED", _("Создано")
     ON_APPROVE = "ON_APPROVE", _("На согласовании")
+    NO_ACTIVE = "NO_ACTIVE", _("Не состоялось")
     FINISHED = "FINISHED", _("Завершено")
     REJECTED = "REJECTED", _("Отклонено")
 
@@ -82,14 +83,14 @@ class Tenders(models.Model):
     status=models.CharField(
         choices=TenderStatus.choices, default=TenderStatus.CREATED,verbose_name='Статус',max_length=255
     )
-    description=models.TextField(default='',verbose_name='Описание')
-    reject_text=models.TextField(default='',verbose_name='Описание')
+    description=models.TextField(default='',verbose_name='Описание',null=True,blank=True)
+    reject_text=models.TextField(default='',verbose_name='Причина отказа',null=True,blank=True)
     moderator_complate=models.BooleanField(default=False,verbose_name='Проверка модератора')
     enable=models.BooleanField(default=False,verbose_name='Активный')
     customer=models.ForeignKey(User,on_delete=models.SET_NULL,verbose_name='Заказчик',related_name='tender_customer',null=True,blank=True)
     executor=models.ForeignKey(User,on_delete=models.SET_NULL,verbose_name='Исполнитель',related_name='tender_executor',null=True,blank=True)
-    winner=models.ForeignKey(User,on_delete=models.SET_NULL,verbose_name='Победитель',related_name='tender_winner',null=True,blank=True)
-    order=models.ForeignKey('Orders',on_delete=models.SET_NULL,verbose_name='Победитель',related_name='tender_order',null=True,blank=True)
+    winner=models.ForeignKey(User,on_delete=models.SET_NULL,verbose_name='Победитель Производитель',related_name='tender_winner',null=True,blank=True)
+    order=models.ForeignKey('Orders',on_delete=models.SET_NULL,verbose_name='Победитель Заявка',related_name='tender_order',null=True,blank=True)
     def __str__(self):
         return self.name
     class Meta:
