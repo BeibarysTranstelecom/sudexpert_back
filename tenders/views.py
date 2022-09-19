@@ -177,4 +177,7 @@ class OrdersCheckView(mixins.ListModelMixin, GenericAPIView):
             else:
                 return Response({'status': 'no_loser'}, status=status.HTTP_404_NOT_FOUND)
         else:
-            return Response({'status': 'in_progress'}, status=status.HTTP_404_NOT_FOUND)
+            if models.Orders.objects.filter(tender=tender,executor=user).exists():
+                return Response({'status': 'in_progress'}, status=status.HTTP_404_NOT_FOUND)
+            else:
+                return Response({'status': 'created'}, status=status.HTTP_404_NOT_FOUND)
