@@ -51,29 +51,34 @@ class ProfileView(mixins.ListModelMixin, GenericAPIView):
         return self.list(request, *args, **kwargs)
     def post(self,request, *args, **kwargs):
         def get_role(text):
-            if text == '"MODERATOR"':
+            if text == 'MODERATOR':
                 return models.UserRole.MODERATOR
             elif text == 'CUSTOMER':
                 return models.UserRole.CUSTOMER
             elif text == 'EXECUTOR':
                 return models.UserRole.EXECUTOR
 
+        email = request.data['email']
+        if models.User.objects.filter(email=email).exists():
+            return Response('В базе данных уже существует пользователь с таким email', status.HTTP_202_ACCEPTED)
+
         user = models.User()
         password = request.data['password']
         full_name = request.data['full_name']
         phone = request.data['phone']
-        email = request.data['email']
         structure = models.Structure.objects.get(id=int(request.data['structure']))
-        role = get_role(request['role'])
+        print(request.data['role'])
+        role = get_role(request.data['role'])
         user.email = email
         user.set_password(password)
-        user.save()
+
         profile = models.Profile()
         profile.full_name = full_name
         profile.phone = phone
-        profile.stucture = structure
+        profile.structure = structure
         profile.role = role
         profile.user = user
+        user.save()
         profile.save()
         return Response('Успешно добавлен.', status.HTTP_202_ACCEPTED)
     def put(self,request,*args, **kwargs):
@@ -85,16 +90,19 @@ class ProfileView(mixins.ListModelMixin, GenericAPIView):
             elif text=='EXECUTOR':
                 return models.UserRole.EXECUTOR
 
-        user=request.user
+
+        if 'user_email' in request.data:
+            user=models.User.objects.get(email=request.data['user_email'])
+        else:
+            user = request.user
         full_name=request.data['full_name']
         phone=request.data['phone']
-        email=request.data['email']
         structure=models.Structure.objects.get(id=int(request.data['structure']))
-        role=get_role(request['role'])
+        role=get_role(request.data['role'])
         profile=user.profile
         profile.full_name=full_name
         profile.phone=phone
-        profile.stucture=structure
+        profile.structure=structure
         profile.role=role
         profile.user=user
         profile.save()
