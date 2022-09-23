@@ -98,7 +98,7 @@ class Tenders(models.Model):
         verbose_name_plural='Тендеры'
         ordering=['-id']
 class TendersFile(models.Model):
-    tender=models.ForeignKey(Tenders,on_delete=models.CASCADE)
+    tender=models.ForeignKey(Tenders,on_delete=models.CASCADE,related_name='files')
     file=models.FileField(upload_to=f'tenders/{tender.name}')
     date_created = models.DateField(auto_now_add=True)
     class Meta:

@@ -50,10 +50,55 @@ class ProfileView(mixins.ListModelMixin, GenericAPIView):
         """
         return self.list(request, *args, **kwargs)
     def post(self,request, *args, **kwargs):
-        print(request)
-        print(request.data)
-        print(request.query_params)
-        return Response('Успешно.', status.HTTP_202_ACCEPTED)
+        def get_role(text):
+            if text == '"MODERATOR"':
+                return models.UserRole.MODERATOR
+            elif text == 'CUSTOMER':
+                return models.UserRole.CUSTOMER
+            elif text == 'EXECUTOR':
+                return models.UserRole.EXECUTOR
+
+        user = models.User()
+        password = request.data['password']
+        full_name = request.data['full_name']
+        phone = request.data['phone']
+        email = request.data['email']
+        structure = models.Structure.objects.get(id=int(request.data['structure']))
+        role = get_role(request['role'])
+        user.email = email
+        user.set_password(password)
+        user.save()
+        profile = models.Profile()
+        profile.full_name = full_name
+        profile.phone = phone
+        profile.stucture = structure
+        profile.role = role
+        profile.user = user
+        profile.save()
+        return Response('Успешно добавлен.', status.HTTP_202_ACCEPTED)
+    def put(self,request,*args, **kwargs):
+        def get_role(text):
+            if text=='"MODERATOR"':
+                return models.UserRole.MODERATOR
+            elif text=='CUSTOMER':
+                return models.UserRole.CUSTOMER
+            elif text=='EXECUTOR':
+                return models.UserRole.EXECUTOR
+
+        user=request.user
+        full_name=request.data['full_name']
+        phone=request.data['phone']
+        email=request.data['email']
+        structure=models.Structure.objects.get(id=int(request.data['structure']))
+        role=get_role(request['role'])
+        profile=user.profile
+        profile.full_name=full_name
+        profile.phone=phone
+        profile.stucture=structure
+        profile.role=role
+        profile.user=user
+        profile.save()
+        return Response('Успешно изменен!.', status.HTTP_202_ACCEPTED)
 class ProfileDetailView(mixins.RetrieveModelMixin, mixins.DestroyModelMixin, GenericAPIView):
     queryset = models.Profile.objects.all()
     serializer_class = serializers.ProfileSerializer
@@ -85,10 +130,12 @@ class TendersView(mixins.ListModelMixin, GenericAPIView):
                 Q(customer=user)
                 | Q(executor=user)
             ).filter(enable=True).distinct()
+        elif role==models.UserRole.MODERATOR:
+            queryset = queryset.all()
         else:
             queryset = queryset.filter(
-                Q(customer=user)
-                | Q(executor=user)
+                Q(enable=True)
+                | Q(moderator_complate=True)
             ).distinct()
         return queryset
     def get(self, request, *args, **kwargs):
@@ -164,9 +211,6 @@ class OrdersView(mixins.ListModelMixin, GenericAPIView):
 
 
 class OrdersCheckView(mixins.ListModelMixin, GenericAPIView):
-    queryset = models.Orders.objects.all()
-    serializer_class = serializers.OrdersSerializer
-    pagination_class = None
     def get(self, request, *args, **kwargs):
         user=request.user
         tender_id =request.query_params['tender_id']
