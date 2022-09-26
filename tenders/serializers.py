@@ -37,7 +37,7 @@ class TendersSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Tenders
         fields = ['id','name','category','date_start', 'date_end','status','description',
-                  'description','moderator_complate','enable','customer',
+                  'reject_text','moderator_complate','enable','customer',
                   'winner','order','files','executor']
 class OrdersSerializer(serializers.ModelSerializer):
     tender=TendersSerializer(read_only=True)

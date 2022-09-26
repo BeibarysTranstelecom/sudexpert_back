@@ -50,6 +50,9 @@ class ProfileView(mixins.ListModelMixin, GenericAPIView):
         """
         return self.list(request, *args, **kwargs)
     def post(self,request, *args, **kwargs):
+        if request.user.profile.role!=models.UserRole.MODERATOR:
+            return Response('Пошел на хуй', status.HTTP_202_ACCEPTED)
+
         def get_role(text):
             if text == 'MODERATOR':
                 return models.UserRole.MODERATOR
@@ -137,7 +140,7 @@ class TendersView(mixins.ListModelMixin, GenericAPIView):
             queryset = queryset.filter(
                 Q(customer=user)
                 | Q(executor=user)
-            ).filter(enable=True).distinct()
+            ).distinct()
         elif role==models.UserRole.MODERATOR:
             queryset = queryset.all()
         else:
@@ -156,16 +159,20 @@ class TendersView(mixins.ListModelMixin, GenericAPIView):
         new_tender.enable=True
         new_tender.customer=request.user
         new_tender.save()
+        print(request.data)
         if 'document' in request.data:
+            print(request.data['document'])
             tender_file=models.TendersFile()
             tender_file.tender=new_tender
-            tender_file.file=request.data['document'][0]
-            tender_file.save()
-            tender_file=models.TendersFile()
-            tender_file.tender=new_tender
-            tender_file.file=request.data['document'][1]
+            tender_file.file=request.data['document']
             tender_file.save()
 
+        if 'document2' in request.data:
+            print(request.data['document2'])
+            tender_file=models.TendersFile()
+            tender_file.tender=new_tender
+            tender_file.file=request.data['document2']
+            tender_file.save()
         res={'text':'Тендер успешно создано.','tender_id':new_tender.id}
         return Response(res, status.HTTP_202_ACCEPTED)
     def put(self,request, *args, **kwargs):
