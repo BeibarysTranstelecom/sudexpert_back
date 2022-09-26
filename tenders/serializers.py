@@ -41,6 +41,7 @@ class TendersSerializer(serializers.ModelSerializer):
                   'winner','order','files','executor']
 class OrdersSerializer(serializers.ModelSerializer):
     tender=TendersSerializer(read_only=True)
+    executor = UserSerializer(read_only=True)
     class Meta:
         model = models.Orders
         fields = "__all__"

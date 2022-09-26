@@ -159,8 +159,13 @@ class TendersView(mixins.ListModelMixin, GenericAPIView):
         if 'document' in request.data:
             tender_file=models.TendersFile()
             tender_file.tender=new_tender
-            tender_file.file=request.data['document']
+            tender_file.file=request.data['document'][0]
             tender_file.save()
+            tender_file=models.TendersFile()
+            tender_file.tender=new_tender
+            tender_file.file=request.data['document'][1]
+            tender_file.save()
+
         res={'text':'Тендер успешно создано.','tender_id':new_tender.id}
         return Response(res, status.HTTP_202_ACCEPTED)
     def put(self,request, *args, **kwargs):
