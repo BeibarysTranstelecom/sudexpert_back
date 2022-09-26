@@ -232,12 +232,12 @@ class OrdersCheckView(mixins.ListModelMixin, GenericAPIView):
             if tender.winner==user:
                 return Response({'status': 'winner'}, status=status.HTTP_200_OK)
             else:
-                return Response({'status': 'no_loser'}, status=status.HTTP_404_NOT_FOUND)
+                return Response({'status': 'no_loser'}, status=status.HTTP_200_OK)
         else:
             if models.Orders.objects.filter(tender=tender,executor=user).exists():
-                return Response({'status': 'in_progress'}, status=status.HTTP_404_NOT_FOUND)
+                return Response({'status': 'in_progress'}, status=status.HTTP_200_OK)
             else:
-                return Response({'status': 'created'}, status=status.HTTP_404_NOT_FOUND)
+                return Response({'status': 'created'}, status=status.HTTP_200_OK)
 
 
 class TenderCheckView(mixins.ListModelMixin, GenericAPIView):
