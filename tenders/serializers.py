@@ -29,16 +29,22 @@ class TenderFileSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.TendersFile
         fields = "__all__"
+class OrdersNewSerializer(serializers.ModelSerializer):
+    executor = UserSerializer(read_only=True)
+    class Meta:
+        model = models.Orders
+        fields = "__all__"
 class TendersSerializer(serializers.ModelSerializer):
     category = CategorySerializer(read_only=True)
     customer = UserSerializer(read_only=True)
     executor = UserSerializer(read_only=True)
     files = TenderFileSerializer(read_only=True,many=True)
+    orders = OrdersNewSerializer(read_only=True,many=True)
     class Meta:
         model = models.Tenders
         fields = ['id','name','category','date_start', 'date_end','status','description',
                   'reject_text','moderator_complate','enable','customer',
-                  'winner','order','files','executor']
+                  'winner','order','files','executor','orders']
 class OrdersSerializer(serializers.ModelSerializer):
     tender=TendersSerializer(read_only=True)
     executor = UserSerializer(read_only=True)
