@@ -117,3 +117,12 @@ class Orders(models.Model):
         verbose_name_plural='Заявки'
         ordering=['-id']
 
+class TGUsers(models.Model):
+    chat_id=models.CharField(_("chat_id"), max_length=255)
+    user = models.OneToOneField(User, on_delete=models.PROTECT, verbose_name='Пользователь')
+    def __str__(self):
+        return f'{self.user.profile.full_name} заявка на тендер {self.chat_id}'
+    class Meta:
+        verbose_name ='Пользователи в Телеграм'
+        verbose_name_plural='Пользователи в Телеграм'
+        ordering=['-id']

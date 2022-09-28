@@ -4,7 +4,6 @@ from drf_spectacular.views import (
     SpectacularRedocView,
     SpectacularSwaggerView,
 )
-from rest_framework.urlpatterns import format_suffix_patterns
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework.routers import DefaultRouter
 from tenders import views
@@ -31,4 +30,9 @@ path("schema/", SpectacularAPIView.as_view(), name="schema"),
     path("orders/", views.OrdersView.as_view()),
     path("check_orders/", views.OrdersCheckView.as_view()),
     path("check_tenders/", views.TenderCheckView.as_view()),
+    path("CheckUserByChatID/", views.CheckUserByChatIDView.as_view()),
+    path("CheckUser/", views.CheckUser.as_view()),
+    path("append_tg_user/", views.AppendTGUser.as_view()),
+    path("Customer_TG/", views.Customer_TG.as_view()),
+    path("EXECUTOR_TG/", views.EXECUTOR_TG.as_view()),
 ]

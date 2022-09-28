@@ -189,3 +189,5 @@ MEDIA_URL = "/media/"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
+TELEGRAM_TOKEN='5415131975:AAFVehXV_vikE8ZGkgsUeRtiaUSkwsJxDWQ'
+TELEGRAM_SEND_URL="https://api.telegram.org/bot" + TELEGRAM_TOKEN + "/sendMessage"
